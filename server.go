@@ -14,7 +14,14 @@ import (
 )
 
 func ProvideServer(gin *gin.Engine) *http.Server {
-	return &http.Server{Addr: os.Getenv("HTTP_ADDRESS"), Handler: gin}
+	var address = ":8080"
+
+	newAddress, ok := os.LookupEnv("HTTP_ADDRESS")
+	if ok {
+		address = newAddress
+	}
+
+	return &http.Server{Addr: address, Handler: gin}
 }
 
 func ProvideServerEngine() *gin.Engine {
