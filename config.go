@@ -28,6 +28,11 @@ func ProvideConfig[T any]() (T, error) {
 		return cfg, err
 	}
 
+	for _, k := range viper.AllKeys() {
+		v := viper.GetString(k)
+		viper.Set(k, os.ExpandEnv(v))
+	}
+
 	err = viper.Unmarshal(&cfg)
 	if err != nil {
 		return cfg, err
