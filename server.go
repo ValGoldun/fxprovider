@@ -63,7 +63,7 @@ func ProvideServerHTTP(appCtx *appcontext.AppContext) (*gin.Engine, *http.Server
 	return handler, &http.Server{Addr: address, Handler: handler}
 }
 
-func InvokeServerHTTP(appCtx *appcontext.AppContext, lc fx.Lifecycle, server *http.Server, logger logger.Logger, checkers ...healthcheck.Checker) error {
+func InvokeServerHTTP(appCtx *appcontext.AppContext, lc fx.Lifecycle, server *http.Server, logger logger.Logger, checkers healthcheck.Checkers) error {
 	for _, checker := range checkers {
 		appCtx.WithHealthChecker(checker)
 	}

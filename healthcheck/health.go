@@ -27,5 +27,5 @@ func (h Health) String() string {
 
 type Check struct {
 	Source string `json:"source"`
-	Error  error  `json:"error,omitempty"`
+	Error  error  `json:"error"`
 }
