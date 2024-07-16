@@ -4,4 +4,5 @@ import "time"
 
 type Application struct {
 	ServerTimeout time.Duration
+	HttpAddress   string
 }

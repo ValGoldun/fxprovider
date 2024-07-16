@@ -13,11 +13,10 @@ import (
 	"os"
 )
 
-func ProvideServer(gin *gin.Engine) *http.Server {
+func ProvideServer(ctx *fxcontext.AppContext, gin *gin.Engine) *http.Server {
 	var address = ":8080"
 
-	newAddress, ok := os.LookupEnv("HTTP_ADDRESS")
-	if ok {
+	if newAddress := ctx.ApplicationConfig().HttpAddress; newAddress != "" {
 		address = newAddress
 	}
 
