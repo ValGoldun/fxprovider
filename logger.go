@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-func ProvideLogger(ctx *fxcontext.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
+func newLogger(ctx *fxcontext.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
 	l, err := logger.New(logger.Info)
 	if err != nil {
 		return logger.Logger{}, err
