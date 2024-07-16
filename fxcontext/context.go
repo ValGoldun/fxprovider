@@ -9,7 +9,7 @@ import (
 type AppContext struct {
 	environment environment.Environment
 	logger      logger.Logger
-	appConfig   fxconfig.Application
+	appConfig   fxconfig.Config
 }
 
 func New() *AppContext {
@@ -24,7 +24,7 @@ func (ctx *AppContext) WithLogger(logger logger.Logger) {
 	ctx.logger = logger
 }
 
-func (ctx *AppContext) WithApplicationConfig(config fxconfig.Application) {
+func (ctx *AppContext) WithApplicationConfig(config fxconfig.Config) {
 	ctx.appConfig = config
 }
 
@@ -36,6 +36,6 @@ func (ctx *AppContext) Logger() logger.Logger {
 	return ctx.logger
 }
 
-func (ctx *AppContext) ApplicationConfig() fxconfig.Application {
+func (ctx *AppContext) ApplicationConfig() fxconfig.Config {
 	return ctx.appConfig
 }
