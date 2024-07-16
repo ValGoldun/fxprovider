@@ -60,7 +60,7 @@ func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
 		return appConfig, err
 	}
 
-	ctx.WithServerTimeout(cfg.Application.ServerTimeout)
+	ctx.WithApplicationConfig(cfg.Application)
 
 	return appConfig, nil
 }

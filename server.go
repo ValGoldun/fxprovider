@@ -2,6 +2,7 @@ package fxprovider
 
 import (
 	"context"
+	"github.com/ValGoldun/fxprovider/fxcontext"
 	"github.com/ValGoldun/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -10,7 +11,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"time"
 )
 
 func ProvideServer(gin *gin.Engine) *http.Server {
@@ -24,7 +24,7 @@ func ProvideServer(gin *gin.Engine) *http.Server {
 	return &http.Server{Addr: address, Handler: gin}
 }
 
-func ProvideServerEngine() *gin.Engine {
+func ProvideServerEngine(ctx *fxcontext.AppContext) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	handler := gin.New()
 
@@ -33,7 +33,19 @@ func ProvideServerEngine() *gin.Engine {
 	metrics.Use(handler)
 
 	handler.Use(gin.Recovery())
-	handler.Use(timeout.Timeout(timeout.WithTimeout(5*time.Second), timeout.WithDefaultMsg("")))
+	handler.Use(
+		timeout.Timeout(
+			timeout.WithTimeout(ctx.ApplicationConfig().ServerTimeout),
+			timeout.WithDefaultMsg(""),
+			timeout.WithCallBack(
+				func(r *http.Request) {
+					ctx.Logger().Error("handler timeout", logger.Field{
+						Key:   "path",
+						Value: r.URL.Path,
+					})
+				}),
+		),
+	)
 
 	handler.GET("/state", func(ctx *gin.Context) {
 		ctx.Status(http.StatusOK)
