@@ -3,23 +3,22 @@ package fxcontext
 import (
 	"context"
 	"github.com/ValGoldun/fxprovider/environment"
+	"github.com/ValGoldun/fxprovider/fxconfig"
 	"github.com/ValGoldun/logger"
-	"time"
 )
 
 const (
 	env = iota + 1
 	log
-	serverTimeout
+	conf
 )
 
 type AppContext struct {
 	context.Context
 }
 
-func New() *AppContext {
-	c := AppContext{context.Background()}
-	return &c
+func New() AppContext {
+	return AppContext{context.Background()}
 }
 
 func (ctx *AppContext) WithEnvironment(env environment.Environment) {
@@ -30,6 +29,6 @@ func (ctx *AppContext) WithLogger(logger logger.Logger) {
 	context.WithValue(ctx.Context, log, logger)
 }
 
-func (ctx *AppContext) WithServerTimeout(timeout time.Duration) {
-	context.WithValue(ctx.Context, serverTimeout, timeout)
+func (ctx *AppContext) WithApplicationConfig(config fxconfig.Application) {
+	context.WithValue(ctx.Context, conf, config)
 }
