@@ -10,21 +10,16 @@ import (
 	"strings"
 )
 
-type Config[T any] struct {
-	Base        T
-	Application fxconfig.Application
-}
-
 func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
-	var cfg Config[T]
-	var appConfig T
+	var cfg T
+	var appConfig fxconfig.Config
 
 	var env, ok = os.LookupEnv("APP_ENV")
 
 	if ok {
 		appEnv, err := environment.ParseEnvironment(env)
 		if err != nil {
-			return appConfig, err
+			return cfg, err
 		}
 
 		ctx.WithEnvironment(appEnv)
@@ -42,7 +37,7 @@ func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		return appConfig, err
+		return cfg, err
 	}
 
 	for _, k := range viper.AllKeys() {
@@ -52,15 +47,15 @@ func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
 
 	err = viper.Unmarshal(&cfg)
 	if err != nil {
-		return appConfig, err
+		return cfg, err
 	}
 
 	err = viper.Unmarshal(&appConfig)
 	if err != nil {
-		return appConfig, err
+		return cfg, err
 	}
 
-	ctx.WithApplicationConfig(cfg.Application)
+	ctx.WithApplicationConfig(appConfig)
 
-	return appConfig, nil
+	return cfg, nil
 }

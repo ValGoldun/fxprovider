@@ -2,7 +2,9 @@ package fxconfig
 
 import "time"
 
-type Application struct {
-	ServerTimeout time.Duration
-	HttpAddress   string
+type Config struct {
+	Application struct {
+		ServerTimeout time.Duration
+		HttpAddress   string
+	}
 }
