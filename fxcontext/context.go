@@ -17,8 +17,9 @@ type AppContext struct {
 	context.Context
 }
 
-func New() AppContext {
-	return AppContext{context.Background()}
+func New() *AppContext {
+	c := AppContext{context.Background()}
+	return &c
 }
 
 func (ctx *AppContext) WithEnvironment(environment environment.Environment) {
