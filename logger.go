@@ -3,12 +3,13 @@ package fxprovider
 import (
 	"context"
 	"errors"
+	"github.com/ValGoldun/fxprovider/appcontext"
 	"github.com/ValGoldun/logger"
 	"go.uber.org/fx"
 	"syscall"
 )
 
-func newLogger(ctx *context.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
+func newLogger(ctx *appcontext.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
 	l, err := logger.New(logger.Info)
 	if err != nil {
 		return logger.Logger{}, err
