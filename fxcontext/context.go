@@ -1,47 +1,41 @@
 package fxcontext
 
 import (
-	"context"
 	"github.com/ValGoldun/fxprovider/environment"
 	"github.com/ValGoldun/fxprovider/fxconfig"
 	"github.com/ValGoldun/logger"
 )
 
-const (
-	env = iota + 1
-	log
-	conf
-)
-
 type AppContext struct {
-	context.Context
+	environment environment.Environment
+	logger      logger.Logger
+	appConfig   fxconfig.Application
 }
 
 func New() *AppContext {
-	c := AppContext{context.Background()}
-	return &c
+	return new(AppContext)
 }
 
 func (ctx *AppContext) WithEnvironment(environment environment.Environment) {
-	ctx.Context = context.WithValue(ctx.Context, env, environment)
+	ctx.environment = environment
 }
 
 func (ctx *AppContext) WithLogger(logger logger.Logger) {
-	ctx.Context = context.WithValue(ctx.Context, log, logger)
+	ctx.logger = logger
 }
 
 func (ctx *AppContext) WithApplicationConfig(config fxconfig.Application) {
-	ctx.Context = context.WithValue(ctx.Context, conf, config)
+	ctx.appConfig = config
 }
 
 func (ctx *AppContext) Environment() environment.Environment {
-	return ctx.Value(env).(environment.Environment)
+	return ctx.environment
 }
 
 func (ctx *AppContext) Logger() logger.Logger {
-	return ctx.Value(log).(logger.Logger)
+	return ctx.logger
 }
 
 func (ctx *AppContext) ApplicationConfig() fxconfig.Application {
-	return ctx.Value(conf).(fxconfig.Application)
+	return ctx.appConfig
 }
