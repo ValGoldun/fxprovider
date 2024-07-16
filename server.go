@@ -16,7 +16,7 @@ import (
 func ProvideServer(ctx *fxcontext.AppContext, gin *gin.Engine) *http.Server {
 	var address = ":8080"
 
-	if newAddress := ctx.ApplicationConfig().HttpAddress; newAddress != "" {
+	if newAddress := ctx.ApplicationConfig().Application.HttpAddress; newAddress != "" {
 		address = newAddress
 	}
 
@@ -34,7 +34,7 @@ func ProvideServerEngine(ctx *fxcontext.AppContext) *gin.Engine {
 	handler.Use(gin.Recovery())
 	handler.Use(
 		timeout.Timeout(
-			timeout.WithTimeout(ctx.ApplicationConfig().ServerTimeout),
+			timeout.WithTimeout(ctx.ApplicationConfig().Application.ServerTimeout),
 			timeout.WithDefaultMsg(""),
 			timeout.WithCallBack(
 				func(r *http.Request) {
