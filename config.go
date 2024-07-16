@@ -2,18 +2,33 @@ package fxprovider
 
 import (
 	"fmt"
+	"github.com/ValGoldun/fxprovider/environment"
+	"github.com/ValGoldun/fxprovider/fxcontext"
 	"github.com/spf13/viper"
 	"os"
 	"strings"
+	"time"
 )
 
-func ProvideConfig[T any]() (T, error) {
-	var cfg T
+type Config[T any] struct {
+	Base          T
+	ServerTimeout time.Duration
+}
+
+func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
+	var cfg Config[T]
 
 	var env, ok = os.LookupEnv("APP_ENV")
 
 	if ok {
-		viper.SetConfigName(fmt.Sprintf("%s.config", env))
+		appEnv, err := environment.ParseEnvironment(env)
+		if err != nil {
+			return cfg.Base, err
+		}
+
+		ctx.WithEnvironment(appEnv)
+
+		viper.SetConfigName(fmt.Sprintf("%s.config", appEnv.String()))
 	} else {
 		viper.SetConfigName("config")
 	}
@@ -26,7 +41,7 @@ func ProvideConfig[T any]() (T, error) {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		return cfg, err
+		return cfg.Base, err
 	}
 
 	for _, k := range viper.AllKeys() {
@@ -36,8 +51,10 @@ func ProvideConfig[T any]() (T, error) {
 
 	err = viper.Unmarshal(&cfg)
 	if err != nil {
-		return cfg, err
+		return cfg.Base, err
 	}
 
-	return cfg, nil
+	ctx.WithServerTimeout(cfg.ServerTimeout)
+
+	return cfg.Base, nil
 }
