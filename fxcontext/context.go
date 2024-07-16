@@ -23,15 +23,15 @@ func New() *AppContext {
 }
 
 func (ctx *AppContext) WithEnvironment(environment environment.Environment) {
-	context.WithValue(ctx.Context, env, environment)
+	ctx.Context = context.WithValue(ctx.Context, env, environment)
 }
 
 func (ctx *AppContext) WithLogger(logger logger.Logger) {
-	context.WithValue(ctx.Context, log, logger)
+	ctx.Context = context.WithValue(ctx.Context, log, logger)
 }
 
 func (ctx *AppContext) WithApplicationConfig(config fxconfig.Application) {
-	context.WithValue(ctx.Context, conf, config)
+	ctx.Context = context.WithValue(ctx.Context, conf, config)
 }
 
 func (ctx *AppContext) Environment() environment.Environment {
