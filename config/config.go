@@ -1,4 +1,4 @@
-package fxconfig
+package config
 
 import "time"
 

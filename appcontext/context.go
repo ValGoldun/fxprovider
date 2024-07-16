@@ -1,15 +1,15 @@
-package fxcontext
+package appcontext
 
 import (
+	"github.com/ValGoldun/fxprovider/config"
 	"github.com/ValGoldun/fxprovider/environment"
-	"github.com/ValGoldun/fxprovider/fxconfig"
 	"github.com/ValGoldun/logger"
 )
 
 type AppContext struct {
 	environment environment.Environment
 	logger      logger.Logger
-	appConfig   fxconfig.Config
+	appConfig   config.Config
 }
 
 func New() *AppContext {
@@ -24,7 +24,7 @@ func (ctx *AppContext) WithLogger(logger logger.Logger) {
 	ctx.logger = logger
 }
 
-func (ctx *AppContext) WithApplicationConfig(config fxconfig.Config) {
+func (ctx *AppContext) WithApplicationConfig(config config.Config) {
 	ctx.appConfig = config
 }
 
@@ -36,6 +36,6 @@ func (ctx *AppContext) Logger() logger.Logger {
 	return ctx.logger
 }
 
-func (ctx *AppContext) ApplicationConfig() fxconfig.Config {
+func (ctx *AppContext) ApplicationConfig() config.Config {
 	return ctx.appConfig
 }

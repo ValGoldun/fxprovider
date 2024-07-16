@@ -1,13 +1,13 @@
 package fxprovider
 
 import (
-	"github.com/ValGoldun/fxprovider/fxcontext"
+	"github.com/ValGoldun/fxprovider/appcontext"
 	"github.com/ValGoldun/logger"
 	"go.uber.org/fx"
 )
 
-func ProvideApplicationCore[Config any](lifecycle fx.Lifecycle) (*fxcontext.AppContext, logger.Logger, Config, error) {
-	ctx := fxcontext.New()
+func ProvideApplicationCore[Config any](lifecycle fx.Lifecycle) (*appcontext.AppContext, logger.Logger, Config, error) {
+	ctx := appcontext.New()
 	var config Config
 
 	config, err := newConfig[Config](ctx)

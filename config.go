@@ -2,17 +2,17 @@ package fxprovider
 
 import (
 	"fmt"
+	"github.com/ValGoldun/fxprovider/appcontext"
+	"github.com/ValGoldun/fxprovider/config"
 	"github.com/ValGoldun/fxprovider/environment"
-	"github.com/ValGoldun/fxprovider/fxconfig"
-	"github.com/ValGoldun/fxprovider/fxcontext"
 	"github.com/spf13/viper"
 	"os"
 	"strings"
 )
 
-func newConfig[T any](ctx *fxcontext.AppContext) (T, error) {
+func newConfig[T any](ctx *appcontext.AppContext) (T, error) {
 	var cfg T
-	var appConfig fxconfig.Config
+	var appConfig config.Config
 
 	var env, ok = os.LookupEnv("APP_ENV")
 

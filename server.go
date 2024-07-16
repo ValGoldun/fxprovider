@@ -2,7 +2,7 @@ package fxprovider
 
 import (
 	"context"
-	"github.com/ValGoldun/fxprovider/fxcontext"
+	"github.com/ValGoldun/fxprovider/appcontext"
 	"github.com/ValGoldun/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-func ProvideServer(ctx *fxcontext.AppContext, gin *gin.Engine) *http.Server {
+func ProvideServer(ctx *appcontext.AppContext, gin *gin.Engine) *http.Server {
 	var address = ":8080"
 
 	if newAddress := ctx.ApplicationConfig().Application.HttpAddress; newAddress != "" {
@@ -23,7 +23,7 @@ func ProvideServer(ctx *fxcontext.AppContext, gin *gin.Engine) *http.Server {
 	return &http.Server{Addr: address, Handler: gin}
 }
 
-func ProvideServerEngine(ctx *fxcontext.AppContext) *gin.Engine {
+func ProvideServerEngine(ctx *appcontext.AppContext) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	handler := gin.New()
 
