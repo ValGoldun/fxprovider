@@ -2,26 +2,17 @@ package config
 
 import (
 	"fmt"
+	"github.com/ValGoldun/fxprovider/appconfig"
 	"github.com/ValGoldun/fxprovider/appcontext"
 	"github.com/ValGoldun/fxprovider/environment"
-	"github.com/ValGoldun/fxprovider/healthcheck"
 	"github.com/spf13/viper"
 	"os"
 	"strings"
-	"time"
 )
-
-type Config struct {
-	Application struct {
-		ServerTimeout         time.Duration
-		HttpAddress           string
-		HealthCheckFailPolicy healthcheck.FailPolicy
-	}
-}
 
 func New[T any](ctx *appcontext.AppContext) (T, error) {
 	var cfg T
-	var appConfig Config
+	var appConfig appconfig.Config
 
 	var env, ok = os.LookupEnv("APP_ENV")
 
