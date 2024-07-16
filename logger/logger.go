@@ -1,4 +1,4 @@
-package fxprovider
+package logger
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-func newLogger(ctx *appcontext.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
+func New(ctx *appcontext.AppContext, lc fx.Lifecycle) (logger.Logger, error) {
 	l, err := logger.New(logger.Info)
 	if err != nil {
 		return logger.Logger{}, err

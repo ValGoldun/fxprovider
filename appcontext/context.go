@@ -3,17 +3,21 @@ package appcontext
 import (
 	"github.com/ValGoldun/fxprovider/config"
 	"github.com/ValGoldun/fxprovider/environment"
+	"github.com/ValGoldun/fxprovider/healthcheck"
 	"github.com/ValGoldun/logger"
 )
 
 type AppContext struct {
-	environment environment.Environment
-	logger      logger.Logger
-	appConfig   config.Config
+	environment    environment.Environment
+	logger         logger.Logger
+	appConfig      config.Config
+	healthCheckers *healthcheck.Checkers
 }
 
 func New() *AppContext {
-	return new(AppContext)
+	return &AppContext{
+		healthCheckers: healthcheck.New(),
+	}
 }
 
 func (ctx *AppContext) WithEnvironment(environment environment.Environment) {
@@ -28,6 +32,10 @@ func (ctx *AppContext) WithApplicationConfig(config config.Config) {
 	ctx.appConfig = config
 }
 
+func (ctx *AppContext) WithHealthChecker(checker healthcheck.Checker) {
+	ctx.healthCheckers.Add(checker)
+}
+
 func (ctx *AppContext) Environment() environment.Environment {
 	return ctx.environment
 }
@@ -38,4 +46,8 @@ func (ctx *AppContext) Logger() logger.Logger {
 
 func (ctx *AppContext) ApplicationConfig() config.Config {
 	return ctx.appConfig
+}
+
+func (ctx *AppContext) HealthCheckers() *healthcheck.Checkers {
+	return ctx.healthCheckers
 }

@@ -13,17 +13,7 @@ import (
 	"os"
 )
 
-func ProvideServer(ctx *appcontext.AppContext, gin *gin.Engine) *http.Server {
-	var address = ":8080"
-
-	if newAddress := ctx.ApplicationConfig().Application.HttpAddress; newAddress != "" {
-		address = newAddress
-	}
-
-	return &http.Server{Addr: address, Handler: gin}
-}
-
-func ProvideServerEngine(ctx *appcontext.AppContext) *gin.Engine {
+func ProvideServerHTTP(appCtx *appcontext.AppContext) (*gin.Engine, *http.Server) {
 	gin.SetMode(gin.ReleaseMode)
 	handler := gin.New()
 
@@ -34,11 +24,11 @@ func ProvideServerEngine(ctx *appcontext.AppContext) *gin.Engine {
 	handler.Use(gin.Recovery())
 	handler.Use(
 		timeout.Timeout(
-			timeout.WithTimeout(ctx.ApplicationConfig().Application.ServerTimeout),
+			timeout.WithTimeout(appCtx.ApplicationConfig().Application.ServerTimeout),
 			timeout.WithDefaultMsg(""),
 			timeout.WithCallBack(
 				func(r *http.Request) {
-					ctx.Logger().Error("handler timeout", logger.Field{
+					appCtx.Logger().Error("handler timeout", logger.Field{
 						Key:   "path",
 						Value: r.URL.Path,
 					})
@@ -47,13 +37,32 @@ func ProvideServerEngine(ctx *appcontext.AppContext) *gin.Engine {
 	)
 
 	handler.GET("/state", func(ctx *gin.Context) {
-		ctx.Status(http.StatusOK)
+		health := appCtx.HealthCheckers().HealthCheck(appCtx.ApplicationConfig().Application.HealthCheckFailPolicy)
+
+		if !health.IsOK {
+			appCtx.Logger().Error("health check failed", logger.Field{
+				Key:   "health",
+				Value: health.String(),
+			})
+
+			ctx.JSON(http.StatusInternalServerError, health)
+			ctx.Abort()
+			return
+		}
+
+		ctx.JSON(http.StatusOK, health)
 	})
 
-	return handler
+	var address = ":8080"
+
+	if newAddress := appCtx.ApplicationConfig().Application.HttpAddress; newAddress != "" {
+		address = newAddress
+	}
+
+	return handler, &http.Server{Addr: address, Handler: handler}
 }
 
-func InvokeHTTPServer(lc fx.Lifecycle, server *http.Server, logger logger.Logger) error {
+func InvokeServerHTTP(lc fx.Lifecycle, server *http.Server, logger logger.Logger) error {
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
 		return err
