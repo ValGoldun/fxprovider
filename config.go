@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func ProvideConfig[T any](ctx *fxcontext.AppContext) (T, error) {
+func newConfig[T any](ctx *fxcontext.AppContext) (T, error) {
 	var cfg T
 	var appConfig fxconfig.Config
 

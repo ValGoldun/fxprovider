@@ -10,7 +10,7 @@ func ProvideApplicationCore[Config any](lifecycle fx.Lifecycle) (*fxcontext.AppC
 	ctx := fxcontext.New()
 	var config Config
 
-	config, err := ProvideConfig[Config](ctx)
+	config, err := newConfig[Config](ctx)
 	if err != nil {
 		return nil, logger.Logger{}, config, err
 	}
