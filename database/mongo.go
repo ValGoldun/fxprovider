@@ -35,32 +35,36 @@ type Mongo interface {
 	*mongo.Client
 }
 
-func ProvideMongo[M Mongo](appCtx *appcontext.AppContext, lc fx.Lifecycle, cfg MongoConfig) (M, error) {
-	var mongoDatabase M
+type MongoProvider[M Mongo] func(appCtx *appcontext.AppContext, lc fx.Lifecycle) (M, error)
 
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeout)
-	defer cancel()
+func ProvideMongo[M Mongo](cfg MongoConfig) MongoProvider[M] {
+	return func(appCtx *appcontext.AppContext, lc fx.Lifecycle) (M, error) {
+		var mongoDatabase M
 
-	client, err := mongo.Connect(
-		ctx,
-		options.Client().SetAuth(options.Credential{
-			Username: cfg.Username,
-			Password: cfg.Password,
-		}),
-		options.Client().ApplyURI(cfg.Address).SetRegistry(bsonregistry.Registry()),
-	)
-	if err != nil {
-		return mongoDatabase, err
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeout)
+		defer cancel()
+
+		client, err := mongo.Connect(
+			ctx,
+			options.Client().SetAuth(options.Credential{
+				Username: cfg.Username,
+				Password: cfg.Password,
+			}),
+			options.Client().ApplyURI(cfg.Address).SetRegistry(bsonregistry.Registry()),
+		)
+		if err != nil {
+			return mongoDatabase, err
+		}
+
+		lc.Append(fx.Hook{OnStop: func(ctx context.Context) error {
+			return client.Disconnect(ctx)
+		}})
+
+		appCtx.WithHealthChecker(Database{
+			client,
+			options.Client().ApplyURI(cfg.Address).Hosts,
+		})
+
+		return client, nil
 	}
-
-	lc.Append(fx.Hook{OnStop: func(ctx context.Context) error {
-		return client.Disconnect(ctx)
-	}})
-
-	appCtx.WithHealthChecker(Database{
-		client,
-		options.Client().ApplyURI(cfg.Address).Hosts,
-	})
-
-	return client, nil
 }
