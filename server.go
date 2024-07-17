@@ -3,7 +3,6 @@ package fxprovider
 import (
 	"context"
 	"github.com/ValGoldun/fxprovider/appcontext"
-	"github.com/ValGoldun/fxprovider/healthcheck"
 	"github.com/ValGoldun/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -63,11 +62,7 @@ func ProvideServerHTTP(appCtx *appcontext.AppContext) (*gin.Engine, *http.Server
 	return handler, &http.Server{Addr: address, Handler: handler}
 }
 
-func InvokeServerHTTP(appCtx *appcontext.AppContext, lc fx.Lifecycle, server *http.Server, logger logger.Logger, checkers healthcheck.Checkers) error {
-	for _, checker := range checkers {
-		appCtx.WithHealthChecker(checker)
-	}
-
+func InvokeServerHTTP(appCtx *appcontext.AppContext, lc fx.Lifecycle, server *http.Server, logger logger.Logger) error {
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
 		return err
