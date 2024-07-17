@@ -62,7 +62,7 @@ func ProvideServerHTTP(appCtx *appcontext.AppContext) (*gin.Engine, *http.Server
 	return handler, &http.Server{Addr: address, Handler: handler}
 }
 
-func InvokeServerHTTP(appCtx *appcontext.AppContext, lc fx.Lifecycle, server *http.Server, logger logger.Logger) error {
+func InvokeServerHTTP(lc fx.Lifecycle, server *http.Server, logger logger.Logger) error {
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
 		return err
