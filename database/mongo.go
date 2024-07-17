@@ -32,15 +32,13 @@ func (db Database) HealthCheck() error {
 }
 
 type Mongo interface {
-	~*mongo.Client
+	~struct{ *mongo.Client }
 }
 
 type MongoProvider[M Mongo] func(appCtx *appcontext.AppContext, lc fx.Lifecycle) (M, error)
 
 func ProvideMongo[M Mongo](cfg MongoConfig) MongoProvider[M] {
 	return func(appCtx *appcontext.AppContext, lc fx.Lifecycle) (M, error) {
-		var mongoDatabase M
-
 		ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeout)
 		defer cancel()
 
@@ -53,7 +51,7 @@ func ProvideMongo[M Mongo](cfg MongoConfig) MongoProvider[M] {
 			options.Client().ApplyURI(cfg.Address).SetRegistry(bsonregistry.Registry()),
 		)
 		if err != nil {
-			return mongoDatabase, err
+			return M{}, err
 		}
 
 		lc.Append(fx.Hook{OnStop: func(ctx context.Context) error {
@@ -65,6 +63,6 @@ func ProvideMongo[M Mongo](cfg MongoConfig) MongoProvider[M] {
 			options.Client().ApplyURI(cfg.Address).Hosts,
 		})
 
-		return client, nil
+		return M{Client: client}, nil
 	}
 }
