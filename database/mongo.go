@@ -32,7 +32,7 @@ func (db Database) HealthCheck() error {
 }
 
 type Mongo interface {
-	*mongo.Client
+	~*mongo.Client
 }
 
 type MongoProvider[M Mongo] func(appCtx *appcontext.AppContext, lc fx.Lifecycle) (M, error)
