@@ -4,6 +4,7 @@ go 1.22.2
 
 require (
 	github.com/ValGoldun/bsonregistry v1.0.0
+	github.com/ValGoldun/clerk v1.0.0
 	github.com/ValGoldun/logger v1.0.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/penglongli/gin-metrics v0.1.10
@@ -24,6 +25,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
